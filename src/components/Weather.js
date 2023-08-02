@@ -9,7 +9,6 @@ export default function Weather() {
     function handleSubmit(e) {
         e.preventDefault();
         fetchWeatherByCityName()
-        setVisible(false)
     }
 
     function fetchWeatherByCityName() {
@@ -17,8 +16,12 @@ export default function Weather() {
         fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiUrl}&units=metric`)
             .then((response) => response.json())
             .then((data) => {
-                setWetherData(data)
-                setVisible(false)
+                if (data.cod == 200) {
+                    setWetherData(data)
+                    setVisible(false)
+                } else {
+                    setError(data.message)
+                }
             })
             .catch((error) => setError(error));
     }
@@ -37,6 +40,9 @@ export default function Weather() {
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit">
                         Submit
                     </button>
+                    {
+                        error && <div className="err">{error}</div>
+                    }
                 </form>
             </div>}
 
@@ -67,12 +73,6 @@ export default function Weather() {
                     </div>
                 </div>
             }
-            {
-                !isVisible && error &&
-                <span>{error}</span>
-            }
         </div>
-
-
     )
 }
